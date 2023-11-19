@@ -1,25 +1,61 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { useContext, useEffect, useState } from 'react';
+import Layout from './components/Layout/Layout';
+import Header from './components/Layout/Header/Header';
+import { useLazyQuery } from '@apollo/client';
+import { GET_NEXT_MODERATION_TASK } from './apollo/queries';
+import Content from './components/Layout/Content/Content';
+import TaskContext from './context/task';
+import Loader from './components/App/Loader/Loader';
+import Error from './components/App/Error/Error';
+import { ToastContainer } from 'react-toastify';
+import { types } from './context/task/constants';
 
 function App() {
+  const [taskID, setTaskID] = useState<string>('#no_id');
+
+  const [getNextTask, { loading, data, error }] = useLazyQuery(
+    GET_NEXT_MODERATION_TASK,
+    {
+      fetchPolicy: 'network-only',
+    }
+  );
+
+  const { state, dispatch } = useContext(TaskContext);
+
+  useEffect(() => {
+    if (taskID !== state?.moderation?.nextTask?.media?.id) {
+      getNextTask();
+    }
+  }, [
+    data?.moderation?.nextTask?.media?.id,
+    getNextTask,
+    state?.moderation?.nextTask?.media?.id,
+    taskID,
+  ]);
+
+  useEffect(() => {
+    if (data && !error && !loading) {
+      dispatch({
+        type: types.SET_TASK,
+        payload: data,
+      });
+      setTaskID(data.moderation.nextTask.media.id);
+    }
+  }, [loading, error, data, dispatch]);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Layout>
+      <Header />
+      {loading && <Loader className='mt-12' />}
+      {!loading && !error && data && <Content getNextTask={getNextTask} />}
+      {!loading && error && <Error onReload={getNextTask} />}
+      <ToastContainer
+        limit={3}
+        autoClose={3000}
+        hideProgressBar
+        toastClassName={'!font-satoshi text-slack-900 font-medium'}
+      />
+    </Layout>
   );
 }
 
