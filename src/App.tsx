@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useState } from 'react';
 import Layout from './components/Layout/Layout';
 import Header from './components/Layout/Header/Header';
 import { useLazyQuery } from '@apollo/client';
@@ -20,15 +20,19 @@ function App() {
     }
   );
 
+  const memoizedGetNextTask = useCallback(() => {
+    getNextTask();
+  }, [getNextTask]);
+
   const { state, dispatch } = useContext(TaskContext);
 
   useEffect(() => {
     if (taskID !== state?.moderation?.nextTask?.media?.id) {
-      getNextTask();
+      memoizedGetNextTask();
     }
   }, [
     data?.moderation?.nextTask?.media?.id,
-    getNextTask,
+    memoizedGetNextTask,
     state?.moderation?.nextTask?.media?.id,
     taskID,
   ]);
