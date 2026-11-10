@@ -10,12 +10,10 @@ const taskReducer = (
   state: ITaskState | null,
   action: ITaskAction
 ): ITaskState | null => {
-  switch (action.type) {
-    case types.SET_TASK:
+  switch (actiontype) {
+    case types.SETTASK:
       if (action.payload) {
-        return {
-          ...action.payload,
-        };
+        return action.payload;
       }
       return null;
     default:

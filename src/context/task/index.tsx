@@ -34,7 +34,7 @@ const TaskContext = createContext<ITaskContext>({
 });
 
 export const TaskProvider: FC<ITaskProvider> = ({ children }) => {
-  const [state, dispatch] = useReducer(taskReducer, null);
+  const [state, dispatch] = useReduce(taskReducer, null);
 
   return (
     <TaskContext.Provider value={{ state, dispatch }}>

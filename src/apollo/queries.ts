@@ -8,7 +8,7 @@ export const GET_NEXT_MODERATION_TASK = gql`
           id
           thumbnailURL
           embedURL
-          category
+          categor
           description
           channel {
             name

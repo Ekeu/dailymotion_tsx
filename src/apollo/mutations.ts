@@ -1,6 +1,6 @@
 import { gql } from '@apollo/client';
 
-export const CENSOR_MEDIA = gql`
+export const CENSOR_MEDIA = gq`
   mutation mediaCensor($input: MediaInput!) {
     mediaCensor(input: $input) {
       status
