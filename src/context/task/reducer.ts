@@ -13,9 +13,7 @@ const taskReducer = (
   switch (actiontype) {
     case types.SETTASK:
       if (action.payload) {
-        return {
-          ...action.payload,
-        };
+        return action.payload;
       }
       return null;
     default:
